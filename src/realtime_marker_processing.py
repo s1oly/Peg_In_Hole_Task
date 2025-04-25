@@ -167,11 +167,10 @@ def initialize (tactile_image):
     pts_init = get_init_marker_location(get_tactile_mask(tactile_image, (0, 0, 0), (100, 110, 140)))
     return pts_init
 
-def plot_magnitude_error(S, P,H):
+def plot_magnitude_error(S, P):
     plt.figure(figsize = (10,5))
     plt.plot(normalize_error_S(S), color = 'r', label = 'S')
     plt.plot(normalize_error_P(P), color = 'g', label = 'P')
-    plt.plot(normalize_error_H(H), color = 'b', label = 'H')
     plt.legend()
     plt.tight_layout()  
     canvas = FigureCanvas(plt.gcf())
@@ -226,7 +225,7 @@ def callback (tactile_image):
 
         #try and normalize the error, scale based on the magnitude of the normalized error
 
-        error_marker = plot_magnitude_error(S,P,H)
+        error_marker = plot_magnitude_error(S,P)
         cv2.imshow('frame_2', error_marker)
         cv2.waitKey(1)
 
@@ -275,9 +274,13 @@ def callback (tactile_image):
             lever_arm_vector = [0,0,1]
             axis = np.cross(contact_force_vector, lever_arm_vector)
             axis = axis/np.linalg.norm(axis)
-            T = create_rotation_matrix(0.5*np.power(normalize_error_P(P)[-1] + normalize_error_S(S)[-1],2), axis)
+            T = create_rotation_matrix(0.3*np.power(normalize_error_P(P)[-1] + normalize_error_S(S)[-1],2) * np.pi/180, axis)
             r = R.from_dcm(T)
             correction = r.as_euler('ZYX', degrees = True)
+            print(correction)
+            msg.data = [correction[0], correction[1], correction[2]]
+        euler_angle_pub.publish(msg)
+
 
 
 

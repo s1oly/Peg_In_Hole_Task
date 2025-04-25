@@ -285,7 +285,7 @@ def process_marker_location (cur_marker_locations, marker_location_init, sort=Fa
 # utils for plotting
 def plot_vector_field_subplot(X, Y, U, V, title, subplot_position):
     plt.subplot(1, 3, subplot_position)
-    plt.quiver(X, Y, U, V, scale=0.2, scale_units='xy') # need to change back to 1
+    plt.quiver(X, Y, U, V, scale=1, scale_units='xy') # need to change back to 1
     plt.axis('scaled')
     plt.xlim(25, 300)
     plt.ylim(20, 225)
